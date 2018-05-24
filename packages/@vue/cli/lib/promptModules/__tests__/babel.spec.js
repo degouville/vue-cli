@@ -9,7 +9,7 @@ test('should pass', async () => {
   const expectedPrompts = [
     {
       message: 'features',
-      check: []
+      check: [0]
     }
   ]
 
@@ -23,11 +23,40 @@ test('should pass', async () => {
     moduleToTest,
     expectedPrompts,
     expectedOptions,
-    { plguinsOnly: true }
+    { pluginsOnly: true }
   )
 })
 
-test('should not include the plugin if ts is also present', async () => {
+test('with TS', async () => {
+  const mockTSModule = api => {
+    api.onPromptComplete(answers => {
+      answers.useTsWithBabel = true
+      answers.features.push('ts')
+    })
+  }
+
+  const expectedPrompts = [
+    {
+      message: 'features',
+      check: [] // no need to check if "useTsWithBabel" is explicitly true
+    }
+  ]
+
+  const expectedOptions = {
+    plugins: {
+      '@vue/cli-plugin-babel': {}
+    }
+  }
+
+  await assertPromptModule(
+    [mockTSModule, moduleToTest],
+    expectedPrompts,
+    expectedOptions,
+    { pluginsOnly: true }
+  )
+})
+
+test('with TS, no Babel', async () => {
   const mockTSModule = api => {
     api.onPromptComplete(answers => {
       answers.features.push('ts')
@@ -49,6 +78,6 @@ test('should not include the plugin if ts is also present', async () => {
     [mockTSModule, moduleToTest],
     expectedPrompts,
     expectedOptions,
-    { plguinsOnly: true }
+    { pluginsOnly: true }
   )
 })

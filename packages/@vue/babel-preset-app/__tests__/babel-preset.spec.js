@@ -7,32 +7,38 @@ const defaultOptions = {
 
 test('polyfill detection', () => {
   let { code } = babel.transformSync(`
-    const a = Promise.resolve()
+    const a = new Map()
   `.trim(), {
     babelrc: false,
     presets: [[preset, {
       targets: { node: 'current' }
     }]]
   })
+  // default includes
   expect(code).not.toMatch(`import "core-js/modules/es6.promise"`)
+  // usage-based detection
+  expect(code).not.toMatch(`import "core-js/modules/es6.map"`)
 
   ;({ code } = babel.transformSync(`
-    const a = Promise.resolve()
+    const a = new Map()
   `.trim(), {
     babelrc: false,
     presets: [[preset, {
       targets: { ie: 9 }
     }]]
   }))
+  // default includes
   expect(code).toMatch(`import "core-js/modules/es6.promise"`)
+  // usage-based detection
+  expect(code).toMatch(`import "core-js/modules/es6.map"`)
 })
 
 test('object spread', () => {
   const { code } = babel.transformSync(`
     const a = { ...b }
   `.trim(), defaultOptions)
-  expect(code).toMatch(`import "core-js/modules/es6.object.assign"`)
-  expect(code).toMatch(`var a = Object.assign({}, b)`)
+  expect(code).toMatch(`import _objectSpread from`)
+  expect(code).toMatch(`var a = _objectSpread({}, b)`)
 })
 
 test('dynamic import', () => {
@@ -52,7 +58,7 @@ test('async/await', () => {
   // should use regenerator runtime
   expect(code).toMatch(`import "regenerator-runtime/runtime"`)
   // should use required helper instead of inline
-  expect(code).toMatch(/@babel.*runtime\/helpers\/asyncToGenerator/)
+  expect(code).toMatch(/@babel.*runtime\/helpers\/.*asyncToGenerator/)
 })
 
 test('jsx', () => {
@@ -64,5 +70,5 @@ test('jsx', () => {
     }
   `.trim(), defaultOptions)
   expect(code).toMatch(`var h = arguments[0]`)
-  expect(code).toMatch(`return h("div", null, ["bar"])`)
+  expect(code).toMatch(`return h("div", ["bar"])`)
 })

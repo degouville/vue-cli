@@ -1,3 +1,241 @@
+<a name="3.0.0-beta.11"></a>
+# [3.0.0-beta.11](https://github.com/vuejs/vue-cli/compare/v3.0.0-beta.10...v3.0.0-beta.11) (2018-05-21)
+
+
+### Bug Fixes
+
+* css sourceMap in production ([#1270](https://github.com/vuejs/vue-cli/issues/1270)) ([2d09a4c](https://github.com/vuejs/vue-cli/commit/2d09a4c))
+* **css:** css-loader importLoaders should account for vue-loader's injected ([853662c](https://github.com/vuejs/vue-cli/commit/853662c)), closes [#1267](https://github.com/vuejs/vue-cli/issues/1267)
+* fix babel.config.js compat in vue-jest ([48d7e00](https://github.com/vuejs/vue-cli/commit/48d7e00))
+* fix transpileDependencies by always using babel.config.js ([1279b3e](https://github.com/vuejs/vue-cli/commit/1279b3e))
+* **eslint:** ensure all config values are contained in config file ([83f5f4f](https://github.com/vuejs/vue-cli/commit/83f5f4f)), closes [#1006](https://github.com/vuejs/vue-cli/issues/1006) [#1313](https://github.com/vuejs/vue-cli/issues/1313)
+* fix ts/tsx rule separation ([41a56f1](https://github.com/vuejs/vue-cli/commit/41a56f1)), closes [#1315](https://github.com/vuejs/vue-cli/issues/1315)
+* handle failed git commit ([a1ccde8](https://github.com/vuejs/vue-cli/commit/a1ccde8)), closes [#1306](https://github.com/vuejs/vue-cli/issues/1306)
+* rename test-utils `shallow` to `shallowMount` ([#1269](https://github.com/vuejs/vue-cli/issues/1269)) ([5c54df7](https://github.com/vuejs/vue-cli/commit/5c54df7))
+* stringifyJS should be used in all call sites ([07ac887](https://github.com/vuejs/vue-cli/commit/07ac887))
+* typo in vue-loader compilerOptions ([#1263](https://github.com/vuejs/vue-cli/issues/1263)) ([b2b277a](https://github.com/vuejs/vue-cli/commit/b2b277a))
+
+
+### Features
+
+* **build:** add 'watch' option ([#1332](https://github.com/vuejs/vue-cli/issues/1332)) ([6ea17c9](https://github.com/vuejs/vue-cli/commit/6ea17c9))
+* **cli-service:** add assetsDir option to specify assets root directory ([#1322](https://github.com/vuejs/vue-cli/issues/1322)) ([9638d90](https://github.com/vuejs/vue-cli/commit/9638d90)), closes [#1311](https://github.com/vuejs/vue-cli/issues/1311)
+* **eslint:** add --max-warnings and --max-errors for cli-plugin-eslint ([#1289](https://github.com/vuejs/vue-cli/issues/1289)) ([ab877a2](https://github.com/vuejs/vue-cli/commit/ab877a2)), closes [#1268](https://github.com/vuejs/vue-cli/issues/1268)
+* **eslint:** enable caching ([ff0f97b](https://github.com/vuejs/vue-cli/commit/ff0f97b))
+* **eslint:** pass cli arguments to linter ([#1258](https://github.com/vuejs/vue-cli/issues/1258)) ([9ac2642](https://github.com/vuejs/vue-cli/commit/9ac2642)), closes [#1255](https://github.com/vuejs/vue-cli/issues/1255)
+* **inspect:** add --rule and --plugin options for inspect command ([82349ba](https://github.com/vuejs/vue-cli/commit/82349ba))
+* **inspect:** add --rules and --plugins options for inspect command ([fd1c0d5](https://github.com/vuejs/vue-cli/commit/fd1c0d5))
+* support `<style lang="postcss">` ([#1259](https://github.com/vuejs/vue-cli/issues/1259)) ([1037b9c](https://github.com/vuejs/vue-cli/commit/1037b9c))
+* **inspect:** improve `vue inspect` output with webpack-chain hints ([f6bfb63](https://github.com/vuejs/vue-cli/commit/f6bfb63)), closes [#881](https://github.com/vuejs/vue-cli/issues/881)
+* allow disabling serve progress via devServer.progress ([da38747](https://github.com/vuejs/vue-cli/commit/da38747)), closes [#1284](https://github.com/vuejs/vue-cli/issues/1284)
+* allow router/vuex to be late added via `vue add` ([2a195f0](https://github.com/vuejs/vue-cli/commit/2a195f0)), closes [#1202](https://github.com/vuejs/vue-cli/issues/1202) [#1204](https://github.com/vuejs/vue-cli/issues/1204)
+* ask for whether to use taobao registry when getting versions ([#1273](https://github.com/vuejs/vue-cli/issues/1273)) ([8fbbd35](https://github.com/vuejs/vue-cli/commit/8fbbd35))
+* GeneratorAPI: addImports & addRootOptions ([8b32f4a](https://github.com/vuejs/vue-cli/commit/8b32f4a))
+* make it possible to opt-out of Babel ([d75ea99](https://github.com/vuejs/vue-cli/commit/d75ea99)), closes [#1199](https://github.com/vuejs/vue-cli/issues/1199)
+* support webp ([763cf7a](https://github.com/vuejs/vue-cli/commit/763cf7a)), closes [#1321](https://github.com/vuejs/vue-cli/issues/1321)
+* temporarily fix source map by patching babel ([453597a](https://github.com/vuejs/vue-cli/commit/453597a))
+
+
+
+<a name="3.0.0-beta.10"></a>
+# [3.0.0-beta.10](https://github.com/vuejs/vue-cli/compare/v3.0.0-beta.9...v3.0.0-beta.10) (2018-05-11)
+
+
+### Bug Fixes
+
+* **build:** fix --dest flag regression ([fd9d255](https://github.com/vuejs/vue-cli/commit/fd9d255)), closes [#1193](https://github.com/vuejs/vue-cli/issues/1193)
+* **serve:** fix non-GET requests match error w/ multi-proxy config ([c4c4bff](https://github.com/vuejs/vue-cli/commit/c4c4bff)), closes [#1210](https://github.com/vuejs/vue-cli/issues/1210)
+* **tslint:** don't change working directory ([#1225](https://github.com/vuejs/vue-cli/issues/1225)) ([8dbe262](https://github.com/vuejs/vue-cli/commit/8dbe262))
+* **typescript:** add node_modules/** to tslint default excludes ([#1200](https://github.com/vuejs/vue-cli/issues/1200)) ([a6e47ce](https://github.com/vuejs/vue-cli/commit/a6e47ce)), closes [#1194](https://github.com/vuejs/vue-cli/issues/1194)
+* **typescript:** separate tsx shim ([51c8090](https://github.com/vuejs/vue-cli/commit/51c8090)), closes [#1198](https://github.com/vuejs/vue-cli/issues/1198)
+* css imports from js ([1b5bdde](https://github.com/vuejs/vue-cli/commit/1b5bdde))
+* ensure dynamic publicPath is set early in lib/wc mode ([c3d246f](https://github.com/vuejs/vue-cli/commit/c3d246f)), closes [#1253](https://github.com/vuejs/vue-cli/issues/1253)
+* improve error message when entry is missing w/ --target lib ([8b4a112](https://github.com/vuejs/vue-cli/commit/8b4a112)), closes [#1051](https://github.com/vuejs/vue-cli/issues/1051)
+* pwa plugin compat with webpack 4 ([6d1716e](https://github.com/vuejs/vue-cli/commit/6d1716e))
+* respect chunk name in all build targets ([66bab8c](https://github.com/vuejs/vue-cli/commit/66bab8c)), closes [#1251](https://github.com/vuejs/vue-cli/issues/1251)
+
+
+### Code Refactoring
+
+* adjust mode loading order ([d595ada](https://github.com/vuejs/vue-cli/commit/d595ada)), closes [#959](https://github.com/vuejs/vue-cli/issues/959)
+* rename test commands ([69ebd80](https://github.com/vuejs/vue-cli/commit/69ebd80)), closes [#876](https://github.com/vuejs/vue-cli/issues/876) [#878](https://github.com/vuejs/vue-cli/issues/878)
+* require Node 8 ([6b865db](https://github.com/vuejs/vue-cli/commit/6b865db))
+
+
+### Features
+
+* default preset save to no ([ab90d50](https://github.com/vuejs/vue-cli/commit/ab90d50)), closes [#1212](https://github.com/vuejs/vue-cli/issues/1212)
+* expose env variables as root level in index.html template ([4c5784d](https://github.com/vuejs/vue-cli/commit/4c5784d))
+* new option "preserveWhitespace" ([ea83441](https://github.com/vuejs/vue-cli/commit/ea83441))
+* relex transpile includes + new transpileDependencies option ([da4d0b2](https://github.com/vuejs/vue-cli/commit/da4d0b2))
+* **babel:** better Babel polyfill defaults ([4e7d57f](https://github.com/vuejs/vue-cli/commit/4e7d57f))
+* **cli:** allow local .json files for presets ([#1201](https://github.com/vuejs/vue-cli/issues/1201)) ([9766db1](https://github.com/vuejs/vue-cli/commit/9766db1)), closes [#1068](https://github.com/vuejs/vue-cli/issues/1068)
+* **serve:** support entry in `vue-cli-service serve` ([05f9f3a](https://github.com/vuejs/vue-cli/commit/05f9f3a)), closes [#974](https://github.com/vuejs/vue-cli/issues/974)
+* **typescript:** support lang="tsx" in vue files ([718ba3c](https://github.com/vuejs/vue-cli/commit/718ba3c)), closes [#1219](https://github.com/vuejs/vue-cli/issues/1219)
+* remove DLL option ([6d4e51d](https://github.com/vuejs/vue-cli/commit/6d4e51d))
+* support { prompts: true } for preset plugins ([3dd38da](https://github.com/vuejs/vue-cli/commit/3dd38da)), closes [#952](https://github.com/vuejs/vue-cli/issues/952)
+* upgrade to vue-loader 15 ([f5c0f58](https://github.com/vuejs/vue-cli/commit/f5c0f58))
+* upgrade to webpack 4 ([2dcdedd](https://github.com/vuejs/vue-cli/commit/2dcdedd))
+
+
+### Reverts
+
+* feat: new option "preserveWhitespace"" ([a8af883](https://github.com/vuejs/vue-cli/commit/a8af883))
+
+
+### BREAKING CHANGES
+
+* `css.modules` option has been removed. To import css files (or
+any other supported pre-processor files) as CSS Modules, append the request
+with a `?module` resourceQuery.
+* Upgrade wepback 4, all webpack option
+modifications must be webpcak 4 compatible. Drop support
+for webpack plugins that do not work with v4 or above.
+* dll option has been removed.
+* the "vueLoader" option has been removed. To modify vue-loader
+options, use chainWebpack then `config.module.rule(vue).use(vue-loader).tap()`.
+vue-loader has been upgraded to v15 and expects different options from v14.
+* To include a dependency for Babel transpilation, tapping
+babel-loader and adding .include() will no longer work. Use the new
+transpileDependencies option instead.
+* `cli-plugin-unit-jest` and `cli-plugin-unit-mocha` now register
+"test:unit" command and script instead of "test"; `cli-plugin-e2e-cypress` now
+register "test:e2e" with optional `--headless` flag instead of "e2e" and
+"e2e:open"; `cli-plugin-e2e-nightwatch` now register "test:e2e" instead of "e2e".
+* PluginAPI.setMode() has been removed. Instead, for a plugin to
+sepcify the default mode for a registered command, the plugins should expose
+`module.exports.defaultModes` in the form of `{ [commandName]: mode }`.
+* @vue/cli-service and all plugins now require Node version 8+.
+
+
+
+<a name="3.0.0-beta.9"></a>
+# [3.0.0-beta.9](https://github.com/vuejs/vue-cli/compare/v3.0.0-beta.8...v3.0.0-beta.9) (2018-04-28)
+
+
+### Bug Fixes
+
+* **dependencies:** add deepmerge dependencies ([#1188](https://github.com/vuejs/vue-cli/issues/1188)) ([67fa39d](https://github.com/vuejs/vue-cli/commit/67fa39d)), closes [#1187](https://github.com/vuejs/vue-cli/issues/1187)
+
+
+
+<a name="3.0.0-beta.8"></a>
+# [3.0.0-beta.8](https://github.com/vuejs/vue-cli/compare/v3.0.0-beta.7...v3.0.0-beta.8) (2018-04-27)
+
+
+### Bug Fixes
+
+* --target lib/wc should overwrite user entry/output ([92e136a](https://github.com/vuejs/vue-cli/commit/92e136a)), closes [#1072](https://github.com/vuejs/vue-cli/issues/1072)
+* add name to chunk file output ([#1173](https://github.com/vuejs/vue-cli/issues/1173)) ([1fc9593](https://github.com/vuejs/vue-cli/commit/1fc9593))
+* allow user to define testMatch in package.json ([#1069](https://github.com/vuejs/vue-cli/issues/1069)) ([cac18f2](https://github.com/vuejs/vue-cli/commit/cac18f2)), closes [#1067](https://github.com/vuejs/vue-cli/issues/1067)
+* avoid emoji length problem in update log (close [#835](https://github.com/vuejs/vue-cli/issues/835)) ([fb7ccb6](https://github.com/vuejs/vue-cli/commit/fb7ccb6))
+* css.extract options handling ([8e72943](https://github.com/vuejs/vue-cli/commit/8e72943)), closes [#1061](https://github.com/vuejs/vue-cli/issues/1061)
+* deep merge objects when extending package.json via plugins ([#1070](https://github.com/vuejs/vue-cli/issues/1070)) ([6af7bbe](https://github.com/vuejs/vue-cli/commit/6af7bbe)), closes [#1053](https://github.com/vuejs/vue-cli/issues/1053)
+* include test -> tests for eslint-loader ([3d29458](https://github.com/vuejs/vue-cli/commit/3d29458))
+* pass all parameters to onProxyReq in proxy configuration ([#1083](https://github.com/vuejs/vue-cli/issues/1083)) ([65ee2fa](https://github.com/vuejs/vue-cli/commit/65ee2fa))
+* **build:** copy plugin should be loaded in all cases ([87892a5](https://github.com/vuejs/vue-cli/commit/87892a5)), closes [#1073](https://github.com/vuejs/vue-cli/issues/1073)
+* **build-wc:** honor custom component name for single file wc builds ([#1182](https://github.com/vuejs/vue-cli/issues/1182)) ([2b236e0](https://github.com/vuejs/vue-cli/commit/2b236e0)), closes [#1146](https://github.com/vuejs/vue-cli/issues/1146)
+* **cli:** fix invoke glob node_modules ignore pattern ([#1004](https://github.com/vuejs/vue-cli/issues/1004)) ([708cde9](https://github.com/vuejs/vue-cli/commit/708cde9))
+* **cli-service:** should not add a leading slash to baseUrl when it is absolute ([#1172](https://github.com/vuejs/vue-cli/issues/1172)) ([abb82ab](https://github.com/vuejs/vue-cli/commit/abb82ab)), closes [#1084](https://github.com/vuejs/vue-cli/issues/1084)
+* **eslint:** fix --no-fix flag when linting with typescript plugin ([#1115](https://github.com/vuejs/vue-cli/issues/1115)) ([83171e4](https://github.com/vuejs/vue-cli/commit/83171e4))
+* **serve:** don't set header origin if using an agent ([#1179](https://github.com/vuejs/vue-cli/issues/1179)) ([79bc088](https://github.com/vuejs/vue-cli/commit/79bc088))
+* **typescript:** fix invalid tsconfig.json ([#1036](https://github.com/vuejs/vue-cli/issues/1036)) ([c49eeb7](https://github.com/vuejs/vue-cli/commit/c49eeb7))
+* **typescript,babel:** tests path for babel and typescript plugins ([#1058](https://github.com/vuejs/vue-cli/issues/1058)) ([b285b0b](https://github.com/vuejs/vue-cli/commit/b285b0b))
+* validate project name ([#1039](https://github.com/vuejs/vue-cli/issues/1039)) ([78ed155](https://github.com/vuejs/vue-cli/commit/78ed155)), closes [#1024](https://github.com/vuejs/vue-cli/issues/1024)
+* vue invoke should delete renamed/removed files ([#1049](https://github.com/vuejs/vue-cli/issues/1049)) ([c648301](https://github.com/vuejs/vue-cli/commit/c648301))
+* **unit-jest:** handle static asset imports ([#1180](https://github.com/vuejs/vue-cli/issues/1180)) ([be3bede](https://github.com/vuejs/vue-cli/commit/be3bede))
+
+
+### Features
+
+* **babel:** expose loose option ([7a125d4](https://github.com/vuejs/vue-cli/commit/7a125d4))
+* **cli:** skip git if already in a git repo, add --skipGit option ([23480ae](https://github.com/vuejs/vue-cli/commit/23480ae)), closes [#967](https://github.com/vuejs/vue-cli/issues/967)
+* **e2e-nightwatch:** allow using custom config via --config flag ([#1016](https://github.com/vuejs/vue-cli/issues/1016)) ([e4d67d6](https://github.com/vuejs/vue-cli/commit/e4d67d6))
+* **inspect:** add a -v/--verbose flag to inspect command to output full functions ([#1175](https://github.com/vuejs/vue-cli/issues/1175)) ([6ca86aa](https://github.com/vuejs/vue-cli/commit/6ca86aa)), closes [#1157](https://github.com/vuejs/vue-cli/issues/1157)
+* allow specifying proxy when creating project ([b1512be](https://github.com/vuejs/vue-cli/commit/b1512be)), closes [#1009](https://github.com/vuejs/vue-cli/issues/1009)
+* support custom initial commit message ([#1116](https://github.com/vuejs/vue-cli/issues/1116)) ([11ccf64](https://github.com/vuejs/vue-cli/commit/11ccf64))
+* warn when user modifies output.path directly ([81d29ab](https://github.com/vuejs/vue-cli/commit/81d29ab))
+* **plugin-api:** allow non-semver versioned dependencies ([#1184](https://github.com/vuejs/vue-cli/issues/1184)) ([0f76b8e](https://github.com/vuejs/vue-cli/commit/0f76b8e)), closes [#1177](https://github.com/vuejs/vue-cli/issues/1177)
+* **pwa:** Make injected meta tags configurable and change defaults ([#961](https://github.com/vuejs/vue-cli/issues/961)) ([36f954b](https://github.com/vuejs/vue-cli/commit/36f954b))
+* **typescript:** improve tsx support ([#1168](https://github.com/vuejs/vue-cli/issues/1168)) ([3aa3743](https://github.com/vuejs/vue-cli/commit/3aa3743))
+
+
+
+<a name="3.0.0-beta.7"></a>
+# [3.0.0-beta.7](https://github.com/vuejs/vue-cli/compare/v3.0.0-beta.6...v3.0.0-beta.7) (2018-04-25)
+
+
+### Bug Fixes
+
+* allow user to define onProxyReq ([#955](https://github.com/vuejs/vue-cli/issues/955)) ([179033d](https://github.com/vuejs/vue-cli/commit/179033d))
+* **invoke:** issue [#1037](https://github.com/vuejs/vue-cli/issues/1037) invoke binary files ([#1038](https://github.com/vuejs/vue-cli/issues/1038)) ([e65110f](https://github.com/vuejs/vue-cli/commit/e65110f))
+* babel legacy decorator ([#1163](https://github.com/vuejs/vue-cli/issues/1163)) ([fb013da](https://github.com/vuejs/vue-cli/commit/fb013da))
+* pin babel version (fix [#1162](https://github.com/vuejs/vue-cli/issues/1162)) ([dbc3f10](https://github.com/vuejs/vue-cli/commit/dbc3f10))
+
+
+### Features
+
+* allow vue add to work with plugins without a generator ([#1032](https://github.com/vuejs/vue-cli/issues/1032)) ([11956ac](https://github.com/vuejs/vue-cli/commit/11956ac))
+* use `esnext` targets for downleveling and modules. ([#966](https://github.com/vuejs/vue-cli/issues/966)) ([ba5a375](https://github.com/vuejs/vue-cli/commit/ba5a375))
+
+
+
+<a name="3.0.0-beta.6"></a>
+# [3.0.0-beta.6](https://github.com/vuejs/vue-cli/compare/v3.0.0-beta.5...v3.0.0-beta.6) (2018-03-06)
+
+
+### Bug Fixes
+
+* do not exit with 1 on lint warnings (fix [#872](https://github.com/vuejs/vue-cli/issues/872)) ([b162cab](https://github.com/vuejs/vue-cli/commit/b162cab))
+* fix [@vue](https://github.com/vue)/cli-service initial version ([08add21](https://github.com/vuejs/vue-cli/commit/08add21))
+* fix babel preset jsx dependency ([2eb1ef9](https://github.com/vuejs/vue-cli/commit/2eb1ef9))
+* fix cases where error fails to display ([dee7809](https://github.com/vuejs/vue-cli/commit/dee7809))
+* fix devServer proxy when using object syntax (fix [#945](https://github.com/vuejs/vue-cli/issues/945)) ([114e085](https://github.com/vuejs/vue-cli/commit/114e085))
+* use dynamic publicPath for web component bundles (fix [#949](https://github.com/vuejs/vue-cli/issues/949)) ([f744040](https://github.com/vuejs/vue-cli/commit/f744040))
+
+
+
+<a name="3.0.0-beta.5"></a>
+# [3.0.0-beta.5](https://github.com/vuejs/vue-cli/compare/v3.0.0-beta.4...v3.0.0-beta.5) (2018-03-05)
+
+
+### Bug Fixes
+
+* resolve template extend source from the template location (fix [#943](https://github.com/vuejs/vue-cli/issues/943)) ([89f5cc3](https://github.com/vuejs/vue-cli/commit/89f5cc3))
+* temporarily disable babel plugins that are not compatible with babel 7 yet ([389ea86](https://github.com/vuejs/vue-cli/commit/389ea86))
+
+
+### Features
+
+* allow specifying plugin versions in presets ([bdce865](https://github.com/vuejs/vue-cli/commit/bdce865))
+
+
+
+<a name="3.0.0-beta.4"></a>
+# [3.0.0-beta.4](https://github.com/vuejs/vue-cli/compare/v3.0.0-beta.3...v3.0.0-beta.4) (2018-03-05)
+
+
+### Bug Fixes
+
+* fix pwa + ts + lint (close [#937](https://github.com/vuejs/vue-cli/issues/937)) ([b878767](https://github.com/vuejs/vue-cli/commit/b878767))
+* mock process for 3rd party libs (close [#934](https://github.com/vuejs/vue-cli/issues/934)) ([a2ac6be](https://github.com/vuejs/vue-cli/commit/a2ac6be))
+* **pwa:** set cacheid in GenerateSW mode only ([#939](https://github.com/vuejs/vue-cli/issues/939)) ([43971d8](https://github.com/vuejs/vue-cli/commit/43971d8)), closes [#891](https://github.com/vuejs/vue-cli/issues/891)
+* **test:** e2e w/ typescript ([#933](https://github.com/vuejs/vue-cli/issues/933)) ([b728624](https://github.com/vuejs/vue-cli/commit/b728624))
+* use same Puppeteer like in main package.json ([#942](https://github.com/vuejs/vue-cli/issues/942)) ([11192cf](https://github.com/vuejs/vue-cli/commit/11192cf))
+
+
+### Features
+
+* add `vue add` command ([#936](https://github.com/vuejs/vue-cli/issues/936)) ([896aec5](https://github.com/vuejs/vue-cli/commit/896aec5))
+* allow specifying additional configs in preset ([2b9a750](https://github.com/vuejs/vue-cli/commit/2b9a750))
+* Generator now supports template inheritance ([1869aa2](https://github.com/vuejs/vue-cli/commit/1869aa2))
+* generatorAPI.exitLog ([#935](https://github.com/vuejs/vue-cli/issues/935)) ([0f2ee80](https://github.com/vuejs/vue-cli/commit/0f2ee80))
+* initialize project with corresponding CSS pre-processor (close [#930](https://github.com/vuejs/vue-cli/issues/930)) ([811d056](https://github.com/vuejs/vue-cli/commit/811d056))
+* read existing files during plugin invocation (close [#873](https://github.com/vuejs/vue-cli/issues/873)) ([de60d9f](https://github.com/vuejs/vue-cli/commit/de60d9f))
+* support using remote preset (close [#884](https://github.com/vuejs/vue-cli/issues/884)) ([2d89c51](https://github.com/vuejs/vue-cli/commit/2d89c51))
+
+
+
 <a name="3.0.0-beta.3"></a>
 # [3.0.0-beta.3](https://github.com/vuejs/vue-cli/compare/v3.0.0-beta.2...v3.0.0-beta.3) (2018-03-03)
 

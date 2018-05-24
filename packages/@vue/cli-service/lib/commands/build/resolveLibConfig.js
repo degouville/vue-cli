@@ -1,43 +1,34 @@
+const fs = require('fs')
 const path = require('path')
 
 module.exports = (api, { entry, name }, options) => {
-  const libName = (
-    name ||
-    api.service.pkg.name ||
-    path.basename(entry).replace(/\.(jsx?|vue)$/, '')
-  )
   // setting this disables app-only configs
   process.env.VUE_CLI_TARGET = 'lib'
   // inline all static asset files since there is no publicPath handling
   process.env.VUE_CLI_INLINE_LIMIT = Infinity
 
+  const { log, error } = require('@vue/cli-shared-utils')
+  const abort = msg => {
+    log()
+    error(msg)
+    process.exit(1)
+  }
+
+  if (!fs.existsSync(api.resolve(entry))) {
+    abort(
+      `Failed to resolve lib entry: ${entry}${entry === `src/App.vue` ? ' (default)' : ''}. ` +
+      `Make sure to specify the correct entry file.`
+    )
+  }
+
+  const libName = (
+    name ||
+    api.service.pkg.name ||
+    path.basename(entry).replace(/\.(jsx?|vue)$/, '')
+  )
+
   function genConfig (format, postfix = format, genHTML) {
     const config = api.resolveChainableWebpackConfig()
-
-    config.entryPoints.clear()
-    const entryName = `${libName}.${postfix}`
-    // set proxy entry for *.vue files
-    if (/\.vue$/.test(entry)) {
-      config
-        .entry(entryName)
-          .add(require.resolve('./entry-lib.js'))
-      config.resolve
-        .alias
-          .set('~entry', api.resolve(entry))
-    } else {
-      config
-        .entry(entryName)
-          .add(api.resolve(entry))
-    }
-
-    config.output
-      .filename(`${entryName}.js`)
-      .chunkFilename(`${entryName}.[id].js`)
-      .library(libName)
-      .libraryExport('default')
-      .libraryTarget(format)
-      // use relative publicPath so this can be deployed anywhere
-      .publicPath('./')
 
     // adjust css output name so they write to the same file
     if (options.css.extract !== false) {
@@ -51,7 +42,7 @@ module.exports = (api, { entry, name }, options) => {
 
     // only minify min entry
     if (!/\.min/.test(postfix)) {
-      config.plugins.delete('uglify')
+      config.optimization.minimize(false)
     }
 
     // externalize Vue in case user imports it
@@ -76,7 +67,32 @@ module.exports = (api, { entry, name }, options) => {
           }])
     }
 
-    return api.resolveWebpackConfig(config)
+    // resolve entry/output
+    const entryName = `${libName}.${postfix}`
+    config.resolve
+      .alias
+        .set('~entry', api.resolve(entry))
+
+    // set entry/output after user configureWebpack hooks are applied
+    const rawConfig = api.resolveWebpackConfig(config)
+
+    rawConfig.entry = {
+      [entryName]: require.resolve('./entry-lib.js')
+    }
+
+    Object.assign(rawConfig.output, {
+      filename: `${entryName}.js`,
+      chunkFilename: `${entryName}.[name].js`,
+      library: libName,
+      libraryExport: 'default',
+      libraryTarget: format,
+      // use dynamic publicPath so this can be deployed anywhere
+      // the actual path will be determined at runtime by checking
+      // document.currentScript.src.
+      publicPath: ''
+    })
+
+    return rawConfig
   }
 
   return [

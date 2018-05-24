@@ -36,14 +36,25 @@ program
 program
   .command('create <app-name>')
   .description('create a new project powered by vue-cli-service')
-  .option('-p, --preset <presetName>', 'Skip prompts and use saved preset')
+  .option('-p, --preset <presetName>', 'Skip prompts and use saved or remote preset')
   .option('-d, --default', 'Skip prompts and use default preset')
   .option('-i, --inlinePreset <json>', 'Skip prompts and use inline JSON string as preset')
   .option('-m, --packageManager <command>', 'Use specified npm client when installing dependencies')
   .option('-r, --registry <url>', 'Use specified npm registry when installing dependencies (only for npm)')
+  .option('-g, --git [message]', 'Force / skip git intialization, optionally specify initial commit message')
   .option('-f, --force', 'Overwrite target directory if it exists')
+  .option('-c, --clone', 'Use git clone when fetching remote preset')
+  .option('-x, --proxy', 'Use specified proxy when creating project')
   .action((name, cmd) => {
     require('../lib/create')(name, cleanArgs(cmd))
+  })
+
+program
+  .command('add <plugin> [pluginOptions]')
+  .allowUnknownOption()
+  .description('install a plugin and invoke its generator in an already created project')
+  .action((plugin) => {
+    require('../lib/add')(plugin, minimist(process.argv.slice(3)))
   })
 
 program
@@ -57,9 +68,14 @@ program
 program
   .command('inspect [paths...]')
   .option('--mode <mode>')
+  .option('--rule <ruleName>', 'inspect a specific module rule')
+  .option('--plugin <pluginName>', 'inspect a specific plugin')
+  .option('--rules', 'list all module rule names')
+  .option('--plugins', 'list all plugin names')
+  .option('-v --verbose', 'Show full function definitions in output')
   .description('inspect the webpack config in a project with vue-cli-service')
   .action((paths, cmd) => {
-    require('../lib/inspect')(paths, cmd.mode)
+    require('../lib/inspect')(paths, cleanArgs(cmd))
   })
 
 program
@@ -83,6 +99,7 @@ program
 program
   .command('init <template> <app-name>')
   .description('generate a project from a remote template (legacy API, requires @vue/cli-init)')
+  .option('-c, --clone', 'Use git clone when fetching remote template')
   .action(() => {
     loadCommand('init', '@vue/cli-init')
   })

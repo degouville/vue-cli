@@ -1,20 +1,33 @@
-const fs = require('fs')
+const fs = require('fs-extra')
 const path = require('path')
 const chalk = require('chalk')
-const rimraf = require('rimraf')
 const inquirer = require('inquirer')
 const Creator = require('./Creator')
 const clearConsole = require('./util/clearConsole')
 const { error, stopSpinner } = require('@vue/cli-shared-utils')
+const validateProjectName = require('validate-npm-package-name')
 
 async function create (projectName, options) {
+  if (options.proxy) {
+    process.env.HTTP_PROXY = options.proxy
+  }
+
   const inCurrent = projectName === '.'
   const name = inCurrent ? path.relative('../', process.cwd()) : projectName
   const targetDir = path.resolve(projectName || '.')
 
+  const result = validateProjectName(name)
+  if (!result.validForNewPackages) {
+    console.error(chalk.red(`Invalid project name: "${projectName}"`))
+    result.errors && result.errors.forEach(err => {
+      console.error(chalk.red(err))
+    })
+    process.exit(1)
+  }
+
   if (fs.existsSync(targetDir)) {
     if (options.force) {
-      rimraf.sync(targetDir)
+      await fs.remove(targetDir)
     } else {
       await clearConsole()
       if (inCurrent) {
@@ -44,7 +57,7 @@ async function create (projectName, options) {
         if (!action) {
           return
         } else if (action === 'overwrite') {
-          rimraf.sync(targetDir)
+          await fs.remove(targetDir)
         }
       }
     }

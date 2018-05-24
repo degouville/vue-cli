@@ -1,7 +1,11 @@
+const ID = 'vue-cli:pwa-html-plugin'
+
 const defaults = {
   name: 'PWA app',
   themeColor: '#4DBA87', // The Vue color
-  msTileColor: '#000000'
+  msTileColor: '#000000',
+  appleMobileWebAppCapable: 'no',
+  appleMobileWebAppStatusBarStyle: 'default'
 }
 
 module.exports = class HtmlPwaPlugin {
@@ -10,15 +14,15 @@ module.exports = class HtmlPwaPlugin {
   }
 
   apply (compiler) {
-    compiler.plugin('compilation', compilation => {
-      compilation.plugin('html-webpack-plugin-before-html-processing', (data, cb) => {
+    compiler.hooks.compilation.tap(ID, compilation => {
+      compilation.hooks.htmlWebpackPluginBeforeHtmlProcessing.tapAsync(ID, (data, cb) => {
         // wrap favicon in the base template with IE only comment
-        data.html = data.html.replace(/<link rel="shortcut icon"[^>]+>/, '<!--[if IE]>$&<![endif]-->')
+        data.html = data.html.replace(/<link rel="icon"[^>]+>/, '<!--[if IE]>$&<![endif]-->')
         cb(null, data)
       })
 
-      compilation.plugin('html-webpack-plugin-alter-asset-tags', (data, cb) => {
-        const { name, themeColor, msTileColor } = this.options
+      compilation.hooks.htmlWebpackPluginAlterAssetTags.tapAsync(ID, (data, cb) => {
+        const { name, themeColor, msTileColor, appleMobileWebAppCapable, appleMobileWebAppStatusBarStyle } = this.options
         const { publicPath } = compiler.options.output
 
         data.head.push(
@@ -49,11 +53,11 @@ module.exports = class HtmlPwaPlugin {
           // Add to home screen for Safari on iOS
           makeTag('meta', {
             name: 'apple-mobile-web-app-capable',
-            content: 'yes'
+            content: appleMobileWebAppCapable
           }),
           makeTag('meta', {
             name: 'apple-mobile-web-app-status-bar-style',
-            content: 'black'
+            content: appleMobileWebAppStatusBarStyle
           }),
           makeTag('meta', {
             name: 'apple-mobile-web-app-title',

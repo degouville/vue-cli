@@ -3,6 +3,7 @@
 - [Installation](#installation)
 - [Usage](#usage)
 - [Creating a New Project](#creating-a-new-project)
+- [Presets](#presets)
 - [Zero-config Prototyping](#zero-config-prototyping)
 - [Installing Plugins in an Existing Project](#installing-plugins-in-an-existing-project)
 - [Inspecting the webpack Config](#inspecting-the-projects-webpack-config)
@@ -42,12 +43,15 @@ create a new project powered by vue-cli-service
 
 Options:
 
-  -p, --preset <presetName>       Skip prompts and use saved preset
+  -p, --preset <presetName>       Skip prompts and use saved or remote preset
   -d, --default                   Skip prompts and use default preset
   -i, --inlinePreset <json>       Skip prompts and use inline JSON string as preset
   -m, --packageManager <command>  Use specified npm client when installing dependencies
   -r, --registry <url>            Use specified npm registry when installing dependencies (only for npm)
+  -g, --git [message]             Force / skip git intialization, optionally specify initial commit message
   -f, --force                     Overwrite target directory if it exists
+  -c, --clone                     Use git clone when fetching remote preset
+  -x, --proxy                     Use specified proxy when creating project
   -h, --help                      output usage information
 ```
 
@@ -59,9 +63,77 @@ vue create my-project
   <img width="682px" src="https://raw.githubusercontent.com/vuejs/vue-cli/dev/docs/screenshot.png">
 </p>
 
-#### Presets
+### Presets
 
-After you've selected features, you can optionally save it as a preset so that you can reuse it for future projects. If you want to delete a saved preset, you can do that by editing `~/.vuerc`.
+After you've selected features, you can optionally save it as a preset so that you can reuse it for future projects. If you want to delete or tweak a saved preset, you can do that by editing `~/.vuerc`.
+
+A preset is defined in JSON. If you have saved a preset via the command line and then open `~/.vuerc`, you will find something like the following:
+
+``` json
+{
+  "useConfigFiles": true,
+  "router": true,
+  "vuex": true,
+  "cssPreprocessor": "sass",
+  "plugins": {
+    "@vue/cli-plugin-babel": {},
+    "@vue/cli-plugin-eslint": {
+      "config": "airbnb",
+      "lintOn": ["save", "commit"]
+    }
+  }
+}
+```
+
+The preset data is used by plugin generators to generate corresponding project files. In addition to the above fields, you can also add additional configuration for integrated tools:
+
+``` js
+{
+  "useConfigFiles": true,
+  "plugins": {...},
+  "configs": {
+    "vue": {...},
+    "postcss": {...},
+    "eslintConfig": {...},
+    "jest": {...}
+  }
+}
+```
+
+These additional configurations will be merged into `package.json` or corresponding config files, depending on the value of `useConfigFiles`. For example, with `"useConfigFiles": true`, the value of `configs.vue` will be merged into `vue.config.js`.
+
+#### Preset Plugin Versioning
+
+You can explicitly specify versions of the plugins being used:
+
+``` js
+{
+  "plugins": {
+    "@vue/cli-plugin-eslint": {
+      "version": "^3.0.0",
+      // ... other options for this plugin
+    }
+  }
+}
+```
+
+Note this is not required for official plugins - when omitted, the CLI will automatically use the latest version available in the registry. However, **it is recommended to provide a explicit version range for any 3rd party plugins listed in a preset**.
+
+#### Remote Presets
+
+You can share a preset with other developers by publishing it in a git repo. The repo should contain a `preset.json` file containing the preset data. You can then use the `--preset` option to use the remote preset when creating a project:
+
+``` sh
+# use preset from GitHub repo
+vue create --preset username/repo my-project
+```
+
+GitLab and BitBucket are also supported. Make sure to use the `--clone` option if fetching from private repos:
+
+``` sh
+vue create --preset gitlab:username/repo --clone my-project
+vue create --preset bitbucket:username/repo --clone my-project
+```
 
 ### Zero-config Prototyping
 
@@ -128,26 +200,41 @@ vue build MyComponent.vue
 
 ### Installing Plugins in an Existing Project
 
-Each CLI plugin ships with a generator (which creates files) and a runtime plugin (which tweaks the core webpack config and injects commands). When you use `vue create` to create a new project, some plugins will be pre-installed for you based on your feature selection. In case you want to install a plugin into an already created project, simply install it first:
+Each CLI plugin ships with a generator (which creates files) and a runtime plugin (which tweaks the core webpack config and injects commands). When you use `vue create` to create a new project, some plugins will be pre-installed for you based on your feature selection. In case you want to install a plugin into an already created project, you can do so with the `vue add` command:
 
 ``` sh
-npm install -D @vue/cli-plugin-eslint
+vue add @vue/eslint
 ```
 
-Then you can invoke the plugin's generator so it generates files into your project:
+> Note: it is recommended to commit your project's current state before running `vue add`, since the command will invoke the plugin's file generator and potentially make changes to your existing files.
+
+The command resolves `@vue/eslint` to the full package name `@vue/cli-plugin-eslint`, installs it from npm, and invokes its generator.
 
 ``` sh
-# the @vue/cli-plugin- prefix can be omitted
-vue invoke eslint
+# these are equivalent to the previous usage
+vue add @vue/cli-plugin-eslint
 ```
 
-In addition, you can pass options to the plugin:
+Without the `@vue` prefix, the command will resolve to an unscoped package instead. For example, to install the 3rd party plugin `vue-cli-plugin-apollo`:
 
 ``` sh
-vue invoke eslint --config airbnb --lintOn save
+# installs and invokes vue-cli-plugin-apollo
+vue add apollo
 ```
 
-It is recommended to commit your project's current state before running `vue invoke`, so that after file generation you can review the changes and revert if needed.
+You can also use 3rd party plugins under a specific scope. For example, if a plugin is named `@foo/vue-cli-plugin-bar`, you can add it with:
+
+``` sh
+vue add @foo/bar
+```
+
+Finally, you can pass generator options to the installed plugin:
+
+``` sh
+vue add @vue/eslint --config airbnb --lintOn save
+```
+
+If a plugin is already installed, you can skip the installation and only invoke its generator with the `vue invoke` command. The command takes the same arguments as `vue add`.
 
 ### Inspecting the Project's Webpack Config
 

@@ -2,25 +2,17 @@ const fs = require('fs')
 const ejs = require('ejs')
 const path = require('path')
 const globby = require('globby')
+const merge = require('deepmerge')
+const resolve = require('resolve')
 const isBinary = require('isbinaryfile')
+const yaml = require('yaml-front-matter')
 const mergeDeps = require('./util/mergeDeps')
+const stringifyJS = require('./util/stringifyJS')
+const { getPluginLink, toShortPluginId } = require('@vue/cli-shared-utils')
 
 const isString = val => typeof val === 'string'
 const isFunction = val => typeof val === 'function'
 const isObject = val => val && typeof val === 'object'
-
-// get link for a 3rd party plugin.
-function getLink (id) {
-  let pkg = {}
-  try {
-    pkg = require(`${id}/package.json`)
-  } catch (e) {}
-  return (
-    pkg.homepage ||
-    (pkg.repository && pkg.repository.url) ||
-    `https://www.npmjs.com/package/${id.replace(`/`, `%2F`)}`
-  )
-}
 
 class GeneratorAPI {
   /**
@@ -37,16 +29,12 @@ class GeneratorAPI {
 
     this.pluginsData = generator.plugins
       .filter(({ id }) => id !== `@vue/cli-service`)
-      .map(({ id }) => {
-        const name = id.replace(/^(@vue|vue-)\/cli-plugin-/, '')
-        const isOfficial = /^@vue/.test(id)
-        return {
-          name: name,
-          link: isOfficial
-            ? `https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-${name}`
-            : getLink(id)
-        }
-      })
+      .map(({ id }) => ({
+        name: toShortPluginId(id),
+        link: getPluginLink(id)
+      }))
+
+    this._entryFile = undefined
   }
 
   /**
@@ -86,7 +74,7 @@ class GeneratorAPI {
   /**
    * Check if the project has a given plugin.
    *
-   * @param {string} id - Plugin id, can omit the (@vue/|vue-)-cli-plugin- prefix
+   * @param {string} id - Plugin id, can omit the (@vue/|vue-|@scope/vue)-cli-plugin- prefix
    * @return {boolean}
    */
   hasPlugin (id) {
@@ -121,7 +109,7 @@ class GeneratorAPI {
       } else if (Array.isArray(value) && Array.isArray(existing)) {
         pkg[key] = existing.concat(value)
       } else if (isObject(value) && isObject(existing)) {
-        pkg[key] = Object.assign({}, existing, value)
+        pkg[key] = merge(existing, value)
       } else {
         pkg[key] = value
       }
@@ -196,6 +184,68 @@ class GeneratorAPI {
   onCreateComplete (cb) {
     this.generator.completeCbs.push(cb)
   }
+
+  /**
+   * Add a message to be printed when the generator exits (after any other standard messages).
+   *
+   * @param {} msg String or value to print after the generation is completed
+   * @param {('log'|'info'|'done'|'warn'|'error')} [type='log'] Type of message
+   */
+  exitLog (msg, type = 'log') {
+    this.generator.exitLogs.push({ id: this.id, msg, type })
+  }
+
+  /**
+   * convenience method for generating a js config file from json
+   */
+  genJSConfig (value) {
+    return `module.exports = ${stringifyJS(value, null, 2)}`
+  }
+
+  /**
+   * Add import statements to a file.
+   */
+  injectImports (file, imports) {
+    const _imports = (
+      this.generator.imports[file] ||
+      (this.generator.imports[file] = new Set())
+    )
+    ;(Array.isArray(imports) ? imports : [imports]).forEach(imp => {
+      _imports.add(imp)
+    })
+  }
+
+  /**
+   * Add options to the root Vue instance (detected by `new Vue`).
+   */
+  injectRootOptions (file, options) {
+    const _options = (
+      this.generator.rootOptions[file] ||
+      (this.generator.rootOptions[file] = new Set())
+    )
+    ;(Array.isArray(options) ? options : [options]).forEach(opt => {
+      _options.add(opt)
+    })
+  }
+
+  /**
+   * Get the entry file taking into account typescript.
+   *
+   * @readonly
+   */
+  get entryFile () {
+    if (this._entryFile) return this._entryFile
+    return (this._entryFile = fs.existsSync(this.resolve('src/main.ts')) ? 'src/main.ts' : 'src/main.js')
+  }
+
+  /**
+   * Is the plugin being invoked?
+   *
+   * @readonly
+   */
+  get invoking () {
+    return this.generator.invoking
+  }
 }
 
 function extractCallDir () {
@@ -207,11 +257,49 @@ function extractCallDir () {
   return path.dirname(fileName)
 }
 
+const replaceBlockRE = /<%# REPLACE %>([^]*?)<%# END_REPLACE %>/g
+
 function renderFile (name, data, ejsOptions) {
   if (isBinary.sync(name)) {
     return fs.readFileSync(name) // return buffer
   }
-  return ejs.render(fs.readFileSync(name, 'utf-8'), data, ejsOptions)
+  const template = fs.readFileSync(name, 'utf-8')
+
+  // custom template inheritance via yaml front matter.
+  // ---
+  // extend: 'source-file'
+  // replace: !!js/regexp /some-regex/
+  // OR
+  // replace:
+  //   - !!js/regexp /foo/
+  //   - !!js/regexp /bar/
+  // ---
+  const parsed = yaml.loadFront(template)
+  const content = parsed.__content
+  let finalTemplate = content.trim() + `\n`
+  if (parsed.extend) {
+    const extendPath = path.isAbsolute(parsed.extend)
+      ? parsed.extend
+      : resolve.sync(parsed.extend, { basedir: path.dirname(name) })
+    finalTemplate = fs.readFileSync(extendPath, 'utf-8')
+    if (parsed.replace) {
+      if (Array.isArray(parsed.replace)) {
+        const replaceMatch = content.match(replaceBlockRE)
+        if (replaceMatch) {
+          const replaces = replaceMatch.map(m => {
+            return m.replace(replaceBlockRE, '$1').trim()
+          })
+          parsed.replace.forEach((r, i) => {
+            finalTemplate = finalTemplate.replace(r, replaces[i])
+          })
+        }
+      } else {
+        finalTemplate = finalTemplate.replace(parsed.replace, content.trim())
+      }
+    }
+  }
+
+  return ejs.render(finalTemplate, data, ejsOptions)
 }
 
 module.exports = GeneratorAPI

@@ -1,11 +1,7 @@
-module.exports = (api, {
-  parallel,
-  lintOnSave,
-  experimentalCompileTsWithBabel
-}) => {
+module.exports = (api, options) => {
   const fs = require('fs')
-  const useThreads = process.env.NODE_ENV === 'production' && parallel
-  const cacheDirectory = api.resolve('node_modules/.cache/cache-loader')
+  const { genCacheConfig } = require('@vue/cli-shared-utils')
+  const useThreads = process.env.NODE_ENV === 'production' && options.parallel
 
   api.chainWebpack(config => {
     config.entry('app')
@@ -16,73 +12,53 @@ module.exports = (api, {
       .extensions
         .merge(['.ts', '.tsx'])
 
-    const tsRule = config.module
-      .rule('ts')
-        .test(/\.tsx?$/)
-        .include
-          .add(api.resolve('src'))
-          .add(api.resolve('test'))
-          .end()
-
-    const vueLoader = config.module
-      .rule('vue')
-        .use('vue-loader')
+    const tsRule = config.module.rule('ts').test(/\.ts$/)
+    const tsxRule = config.module.rule('tsx').test(/\.tsx$/)
 
     // add a loader to both *.ts & vue<lang="ts">
-    const addLoader = loader => {
-      const use = tsRule
-        .use(loader.loader)
-          .loader(loader.loader)
-      if (loader.options) {
-        use.options(loader.options)
-      }
-      vueLoader.tap(options => {
-        options.loaders = options.loaders || {}
-        options.loaders.ts = options.loaders.ts || []
-        options.loaders.ts.push(loader)
-        return options
-      })
+    const addLoader = ({ loader, options }) => {
+      tsRule.use(loader).loader(loader).options(options)
+      tsxRule.use(loader).loader(loader).options(options)
     }
 
     addLoader({
       loader: 'cache-loader',
-      options: { cacheDirectory }
+      options: genCacheConfig(api, options, 'ts-loader', 'tsconfig.json')
     })
+
     if (useThreads) {
       addLoader({
         loader: 'thread-loader'
       })
     }
 
-    if (!experimentalCompileTsWithBabel) {
-      if (api.hasPlugin('babel')) {
-        addLoader({
-          loader: 'babel-loader'
-        })
-      }
-      addLoader({
-        loader: 'ts-loader',
-        options: {
-          transpileOnly: true,
-          appendTsSuffixTo: [/\.vue$/],
-          // https://github.com/TypeStrong/ts-loader#happypackmode-boolean-defaultfalse
-          happyPackMode: useThreads
-        }
-      })
-    } else {
-      // Experimental: compile TS with babel so that it can leverage
-      // preset-env for auto-detected polyfills based on browserslists config.
-      // this is pending on the readiness of @babel/preset-typescript.
+    if (api.hasPlugin('babel')) {
       addLoader({
         loader: 'babel-loader'
       })
     }
+    addLoader({
+      loader: 'ts-loader',
+      options: {
+        transpileOnly: true,
+        appendTsSuffixTo: [/\.vue$/],
+        // https://github.com/TypeStrong/ts-loader#happypackmode-boolean-defaultfalse
+        happyPackMode: useThreads
+      }
+    })
+    // make sure to append TSX suffix
+    tsxRule.use('ts-loader').loader('ts-loader').tap(options => {
+      options = Object.assign({}, options)
+      delete options.appendTsSuffixTo
+      options.appendTsxSuffixTo = [/\.vue$/]
+      return options
+    })
 
     config
       .plugin('fork-ts-checker')
         .use(require('fork-ts-checker-webpack-plugin'), [{
           vue: true,
-          tslint: lintOnSave !== false && fs.existsSync(api.resolve('tslint.json')),
+          tslint: options.lintOnSave !== false && fs.existsSync(api.resolve('tslint.json')),
           formatter: 'codeframe',
           // https://github.com/TypeStrong/ts-loader#happypackmode-boolean-defaultfalse
           checkSyntacticErrors: useThreads
